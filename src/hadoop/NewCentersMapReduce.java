@@ -20,7 +20,7 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 
-public class KMeansMapReduce extends MapReduceBase implements
+public class NewCentersMapReduce extends MapReduceBase implements
 		Mapper<Text, Text, LongWritable, Text>,
 		Reducer<LongWritable, Text, LongWritable, Text> {
 
@@ -38,7 +38,7 @@ public class KMeansMapReduce extends MapReduceBase implements
 			e.printStackTrace();
 			return;
 		}
-		cacheFiles = FileManager.checkFolder(cacheFiles, conf, false);
+		cacheFiles = FileManager.checkFolder(cacheFiles, conf, false);	
 	    centers.clear();
 	    if (cacheFiles.length > 0) {
 	    	for (Path cachePath : cacheFiles) {
@@ -128,7 +128,7 @@ public class KMeansMapReduce extends MapReduceBase implements
 			}
 		}
 		double minDist = 0;
-		int clusterId = -1;
+		double clusterId = -1;
 		
 		for (UserGrades center: centers) {
 			double dist = Metrics.getDistance(list, center);

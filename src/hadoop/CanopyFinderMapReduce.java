@@ -38,16 +38,13 @@ public class CanopyFinderMapReduce extends MapReduceBase implements
 			e.printStackTrace();
 			return;
 		}
-	    if (cacheFiles == null) {
-	    	//TODO
-	    	cacheFiles = FileManager.getFiles(new Path(FileManager.centersPath), conf).toArray(new Path[1]);
-	    }	
-	    centers.clear();
-	    if (cacheFiles.length > 0) {
-	    	for (Path cachePath : cacheFiles) {
-	            addCenters(cachePath);
-	        }
-	    }
+		cacheFiles = FileManager.checkFolder(cacheFiles, conf, false);
+		centers.clear();
+		if (cacheFiles.length > 0) {
+			for (Path cachePath : cacheFiles) {
+				addCenters(cachePath);
+			}
+		}
 	}
 
 	private void addCenters(Path cachePath) {
@@ -79,7 +76,7 @@ public class CanopyFinderMapReduce extends MapReduceBase implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
@@ -131,7 +128,7 @@ public class CanopyFinderMapReduce extends MapReduceBase implements
 			}
 		}
 		StringBuilder builder = new StringBuilder();
-		for (UserGrades center: centers) {
+		for (UserGrades center : centers) {
 			if (Metrics.sameWeakCanopy(list, center)) {
 				builder.append(center.getId());
 				builder.append(" ");

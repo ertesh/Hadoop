@@ -43,10 +43,7 @@ public class RecommendationsMapReduce extends MapReduceBase implements
 			e.printStackTrace();
 			return;
 		}
-	    if (cacheFiles == null) {
-	    	//TODO
-	    	cacheFiles = FileManager.getFiles(new Path(FileManager.centersPath), conf).toArray(new Path[1]);
-	    }	
+		cacheFiles = FileManager.checkFolder(cacheFiles, conf, true);
 		clusterMap.clear();
 		clusters.clear();
 	    if (cacheFiles.length > 0) {
@@ -69,17 +66,17 @@ public class RecommendationsMapReduce extends MapReduceBase implements
 		String line;
 		try {
 			while ((line = bReader.readLine()) != null) {
-				UserGrades center = new UserGrades();
 				String[] tab = line.split("\\s+");
-				int id = Integer.parseInt(tab[0]);
-				center.setId(id);
-				List<Integer> cluster = new ArrayList<Integer>();
-				for (int i = 1; i < tab.length; i++) {
-					int movie = Integer.parseInt(tab[i]);
-					clusterMap.put(movie, id);
+				int movie = Integer.parseInt(tab[0]);
+				int id = Integer.parseInt(tab[1]);
+				clusterMap.put(movie, id);
+				if (clusters.containsKey(id)) {
+					clusters.get(id).add(movie);
+				} else {
+					List<Integer> cluster = new ArrayList<Integer>();
 					cluster.add(movie);
+					clusters.put(id, cluster);
 				}
-				clusters.put(id, cluster);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

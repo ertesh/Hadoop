@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
@@ -19,32 +18,41 @@ public class HadoopManager {
 
 	public void run() {
 		FileManager.deleteDir(new File(FileManager.outPath));
-		FileManager.deleteDir(new File(FileManager.centersPath));
+		FileManager.deleteDir(new File(FileManager.tmpPath));
 
 		// find canopy centers
-		runMapReduce(FileManager.inPath, FileManager.centersPath, null,
+		runMapReduce(FileManager.inPath, FileManager.centersPath + "0", null,
 				LongWritable.class, Text.class, CanopyCentersMapReduce.class,
 				CanopyCentersMapReduce.class);
 
 		// find canopies
 		runMapReduce(FileManager.inPath, FileManager.canopiesPath,
-				FileManager.centersPath, LongWritable.class, Text.class,
+				FileManager.centersPath + "0", LongWritable.class, Text.class,
 				CanopyFinderMapReduce.class, CanopyFinderMapReduce.class);
 
-		final int maxLoops = 10;
-		for (int i = 0; i < maxLoops; i++) {
+		final int maxLoops = 3;
+		for (int i = 1; i <= maxLoops; i++) {
 			// run k-means clustering iteration
-			runMapReduce(FileManager.inPath, FileManager.tmpPath,
-					FileManager.canopiesPath, LongWritable.class, Text.class,
-					KMeansMapReduce.class, KMeansMapReduce.class);
+			runMapReduce(FileManager.inPath, FileManager.clustersPath + i,
+					FileManager.centersPath + (i - 1), LongWritable.class,
+					Text.class, KMeansMapReduce.class, KMeansMapReduce.class);
+
+			// choose new k centers
+			runMapReduce(FileManager.inPath, FileManager.centersPath + i,
+					FileManager.clustersPath + i, LongWritable.class,
+					Text.class, NewCentersMapReduce.class,
+					NewCentersMapReduce.class);
+
 		}
 
 		// get recommendations
-		runMapReduce(FileManager.inPath, FileManager.centersPath,
-				FileManager.clustersPath, LongWritable.class, Text.class,
-				RecommendationsMapReduce.class, RecommendationsMapReduce.class);
+		runMapReduce(FileManager.inPath, FileManager.outPath,
+				FileManager.clustersPath + maxLoops, LongWritable.class,
+				Text.class, RecommendationsMapReduce.class,
+				RecommendationsMapReduce.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void runMapReduce(String inPath, String outPath, String cachePath,
 			Class<?> keyClass, Class<?> valueClass,
 			Class<? extends Mapper> mapper, Class<? extends Reducer> reducer) {
@@ -82,5 +90,4 @@ public class HadoopManager {
 			e.printStackTrace();
 		}
 	}
-
 }

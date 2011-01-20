@@ -29,7 +29,7 @@ public class Metrics {
 		double ret = 0.0;
 		int counter = 0;
 		Map<Integer, Integer> map1 = candidate.getMap();
-		Map<Integer, Integer> map2 = candidate.getMap();
+		Map<Integer, Integer> map2 = center.getMap();
 		for (Map.Entry<Integer, Integer> entry: map1.entrySet()) {
 			int user = entry.getKey();
 			int grade = entry.getValue();

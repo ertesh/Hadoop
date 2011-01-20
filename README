@@ -1,0 +1,15 @@
+Zadanie 2 z JNP: Technologie Google
+Autor: Maciej Andrejczuk
+
+
+W rozwiązaniu wykorzystuję Canopy Clustering i K-Means Clustering, tak jak omówione zostały w materiałach wideo. Wykorzystuję do tego pięć różnych funkcji map-reduce:
+1. CanopyCenters - znajduje centra kolejnych 'canopy', przy czym funkcją odległości jest ilość użytkowników, którzy ocenili oba te filmy. Jeżeli wartość ta jest większa od ustalonej stałej, filmy znajdują się w jednej 'canopy'.
+2. CanopyFinder - wyznacza dla każdego filmu wszystkie canopy, do których on należy. Funkcja ta sama co wyżej, ale stała jest większa.
+3. KMeans - przyporządkowuje wszystkim filmom najbliższe centrum. Jako początkowe centra ustalam wszystkie centra 'canopy'. Funkcja odległości to norma euklidesowa unormowanego wektora, zawierającego różnicę między ocenami tych filmów dla każdego użytkownika, który ocenił oba. Czy jakoś tak ;)
+4. NewCenters - wyznacza nowe centra klastrów. W tym celu wybiera film najbliższy średniej arytmetycznej ocen wszystkich filmów należących do danego klastra.
+5. Recommendations - Dla każdego użytkownika wybiera filmy znajdujące się w tych samych klastrach, co filmy wysoko ocenione przez danego użytkownika.
+
+
+Aby zobaczyć działanie programu należy spod Eclipse uruchomić funkcję main w klasie api.Main.
+Zostaną wygenerowane losowe oceny, uruchomione opisane wyżej Map-Reduce'y.
+Na standardowym wyjściu pojawią się wszystkie otrzymane rekomendacje.

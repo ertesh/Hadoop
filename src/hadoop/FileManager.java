@@ -16,6 +16,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapred.JobConf;
 
 import api.Grade;
 import api.Movie;
@@ -63,6 +64,16 @@ public class FileManager {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public static Path[] checkFolder(Path[] cacheFiles, JobConf conf, boolean b) {
+		if (cacheFiles != null)
+			return cacheFiles;
+
+		String path = centersPath + "0";
+		if (b) path = clustersPath + "1";
+		return getFiles(new Path(path), conf).toArray(new Path[1]);
+
 	}
 
 	public static void saveGrades(Map<User, List<Grade>> grades) {

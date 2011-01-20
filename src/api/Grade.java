@@ -18,7 +18,7 @@ public class Grade {
 		if (user == null || movie == null) {
 			System.out.println("err");
 		}
-		return user.getId() + " " + movie.getId() + " " + grade;
+		return movie.getId() + "\t" + user.getId() + " " + grade;
 	}
 	
 	public String toString() {

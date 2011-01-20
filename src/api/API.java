@@ -1,6 +1,7 @@
 package api;
 
-import hadoop.FriendsFinder;
+import hadoop.FileManager;
+import hadoop.HadoopManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,9 +59,10 @@ public class API {
 	}
 	
 	public void updateRecommendations() {
+		// this function may be run on Hadoop
 		FileManager.saveGrades(grades);
-		FriendsFinder finder = new FriendsFinder();
-		finder.run();
+		HadoopManager hadoop = new HadoopManager();
+		hadoop.run();
 		recommendations.clear();
 		recommendations = FileManager.readRecommendations();
 	}

@@ -26,8 +26,8 @@ public class Main {
 	}
 	
 	public static void insertData(API api) {
-		final int movieCount = 50;
-		final int userCount = 20;
+		final int movieCount = 100;
+		final int userCount = 200;
 		
 		
 		for (int i = 1; i <= movieCount; i++) {

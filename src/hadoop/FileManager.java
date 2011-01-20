@@ -1,4 +1,4 @@
-package api;
+package hadoop;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,10 +12,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
+import api.Grade;
+import api.Movie;
+import api.User;
+
 public class FileManager {
 	public static final String inPath = "input";
-	public static final String tmpPath = "tmp";
 	public static final String outPath = "output";
+	public static final String tmpPath = "tmp";
+	public static final String centersPath = tmpPath + "/" + "centers";
+	public static final String canopiesPath = tmpPath + "/" + "canopies";
+	public static final String clustersPath = tmpPath + "/" + "clusters";
 
 	// Deletes all files and subdirectories under dir.
 	// Returns true if all deletions were successful.
@@ -36,6 +48,21 @@ public class FileManager {
 
 		// The directory is now empty so delete it
 		return dir.delete();
+	}
+	
+	public static List<Path> getFiles (Path path, Configuration conf) {
+		List<Path> list = new ArrayList<Path> ();
+		try {
+			FileStatus[] fsa = FileSystem.get(conf).listStatus(path);
+			for (FileStatus fs : fsa) {
+				if (!fs.isDir())
+					list.add(fs.getPath());
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	public static void saveGrades(Map<User, List<Grade>> grades) {
